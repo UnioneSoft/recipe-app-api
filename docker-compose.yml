@@ -4,6 +4,9 @@ services:
   app:
     build:
       context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
       args:
         - DEV=true
     ports:
@@ -12,7 +15,7 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py wait_for_db &&
-             python manage.py migrate && 
+             python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8080"
     environment:
       - DB_HOST=db
