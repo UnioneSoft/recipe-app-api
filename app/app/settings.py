@@ -20,12 +20,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--mtxv*5!7#6tr4g7wao6nh*zk^+v0vxlp!tqe8j--2d23rm#kj'
+SECRET_KEY = os.environ.get("SECRET_KEY", 'changeme')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
-ALLOWED_HOSTS = ["127.0.0.1", "127.0.0.1:8080", 'localhost', 'localhost:8080']
+ALLOWED_HOSTS = []
+ALLOWED_HOSTS.extend(
+  filter(
+    None,
+    os.environ.get("ALLOWED_HOSTS", "").split(",")
+  )
+)
+
 
 # Application definition
 
@@ -124,7 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/static/'
+MEDIA_URL = '/static/media/'
+
+MEDIA_ROOT = '/vol/web/media'
+STATIC_ROOT = '/vol/web/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -135,4 +146,8 @@ AUTH_USER_MODEL = "core.User"
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+  'COMPONENT_SPLIT_REQUEST': True,
 }
